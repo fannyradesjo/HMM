@@ -1,5 +1,4 @@
 import java.util.*;
-import java.io.IOException;
 import java.lang.Math;
 
 public class HMM0 {
@@ -47,7 +46,6 @@ public class HMM0 {
       }
 
       for(int i = 0; i < Integer.parseInt(data[2][1]); i++){
-        System.out.println(i);
         pi[i] = Float.parseFloat(data[2][i+2]);
       }
 
