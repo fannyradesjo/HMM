@@ -88,7 +88,7 @@ public class HMM1 {
 
 //Här börjar alpha-pass algoritmen. Troligtvis HÄR DET ÄR FEL
         for(int i = 0; i < N; i++){
-          alpha[0][i] = pi[0][i]*B[seq[0]][i];
+          alpha[0][i] = pi[0][i]*B[i][seq[0]];
       }
 
       for(int t = 1; t < T; t++){
