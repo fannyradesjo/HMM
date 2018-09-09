@@ -86,6 +86,7 @@ public class HMM1 {
         System.out.println(Arrays.toString(seq));*/
 
 
+//Här börjar alpha-pass algoritmen. Troligtvis HÄR DET ÄR FEL
         for(int i = 0; i < N; i++){
           alpha[0][i] = pi[0][i]*B[seq[0]][i];
       }
