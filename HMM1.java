@@ -43,6 +43,11 @@ public class HMM1 {
         Float[][] B = new Float[brow][bcol];
         Float[][] pi = new Float[1][data[2].length-2];
         int[] seq = new int[data[3].length-1];
+        Float[][] alpha = new Float[seq.length][pi[0].length];
+        Float sum = 0f;
+        Float Prob = 0f;
+        int N = pi[0].length;
+        int T = seq.length;
 
         int w = 2;
         for(int i = 0; i < arow; i++){
@@ -69,7 +74,7 @@ public class HMM1 {
         }
 
         //  Se hur matriserna ser ut
-        System.out.println("A: ");
+      /*  System.out.println("A: ");
         for(int i = 0; i < A.length; i++){
         System.out.println(Arrays.toString(A[i]));}
         System.out.println("B: ");
@@ -78,8 +83,28 @@ public class HMM1 {
         System.out.println("pi: ");
         System.out.println(Arrays.toString(pi[0]));
         System.out.println("seq: ");
-        System.out.println(Arrays.toString(seq));
+        System.out.println(Arrays.toString(seq));*/
 
 
+        for(int i = 0; i < N; i++){
+          alpha[0][i] = pi[0][i]*B[seq[0]][i];
+      }
+
+      for(int t = 1; t < T; t++){
+        for(int i = 0; i < N; i++){
+          sum = 0f;
+          for(int j = 0; j < N; j++){
+            sum += alpha[t-1][j]*A[j][i];
+          }
+          alpha[t][i] = sum*B[i][seq[t]];
+        }
+      }
+
+      for(int i = 0; i < N; i++){
+        Prob += alpha[seq.length-1][i];
+      }
+
+
+      System.out.println(Prob);
       }
 }
