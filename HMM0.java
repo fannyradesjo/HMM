@@ -2,6 +2,8 @@ import java.util.*;
 import java.lang.Math;
 import java.lang.StringBuilder;
 
+// Kattis ID 3041805
+
 public class HMM0 {
 
       public static String[][] takeInput(){
