@@ -3,7 +3,7 @@ import java.lang.Math;
 import java.lang.StringBuilder;
 
 
-public class HMM2 {
+public class HMM3 {
 
       public static String[][] takeInput(){
         Scanner scan = new Scanner(System.in);

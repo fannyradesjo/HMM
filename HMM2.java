@@ -60,12 +60,13 @@ public class HMM2 {
       int N = pi[0].length;
       int T = seq.length;
 //      Float[][] alpha = new Float[seq.length][pi[0].length];
-      Float[][] delta = new Float[seq.length][pi[0].length];
+      Float[][] delta = new Float[T][N];
 //      Float[][] beta = new Float[T][N];
 //      Float[][] gamma = new Float[T][N];
 //      Float sum = 0f;
       int[] ProbSeq = new int[T];
       Float possibledelta;
+      Float largest;
 
       //Create A from input data
       int w = 2;
@@ -149,24 +150,28 @@ public class HMM2 {
       }
       */
 
-      
-      for(int t = 0; t < T; t++){
+
+      for(int t = 1; t < T; t++){
         ProbSeq[t] = 0;
         for(int i = 0; i < N; i++){
-          Float largest = 0f;
+          largest = 0f;
           for(int j = 0; j < N; j++){
-            possibledelta = A[j][i]*delta[t][j]*B[i][t];  //delta[t-1][j] ??
+            possibledelta = A[j][i]*delta[t-1][j]*B[i][seq[t]];
             if(possibledelta > largest){
               largest = possibledelta;
+              ProbSeq[t] = i;
             }
           delta[t][i] = largest;
-          ProbSeq[t] = i;
           }
         }
       }
 
+    /*  System.out.println("delta: ");
+        for(int i = 0; i < delta.length; i++){
+        System.out.println(Arrays.toString(delta[i]));}*/
 
-    /*  System.out.println("alpha: ");
+
+    /*System.out.println("alpha: ");
       for(int i = 0; i < alpha.length; i++){
       System.out.println(Arrays.toString(alpha[i]));}
       System.out.println("beta: ");
