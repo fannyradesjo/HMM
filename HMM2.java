@@ -65,15 +65,7 @@ public class HMM2 {
 //      Float[][] gamma = new Float[T][N];
 //      Float sum = 0f;
       int[] ProbSeq = new int[T];
-<<<<<<< HEAD
-<<<<<<< HEAD
-      Float largest;
-=======
       Float possibledelta;
->>>>>>> dcd9cd42e6c094358d08aa29c82d90b6f23b13d2
-=======
-      Float possibledelta;
->>>>>>> dcd9cd42e6c094358d08aa29c82d90b6f23b13d2
 
       //Create A from input data
       int w = 2;
@@ -155,24 +147,11 @@ public class HMM2 {
           gamma[t][i] = (alpha[t][i]*beta[t][i])/sumAlpha;
         }
       }
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-
-
-=======
       */
->>>>>>> dcd9cd42e6c094358d08aa29c82d90b6f23b13d2
-      for(int t = 0; t < T; t++){
-        largest = 0f;
-=======
-      */
+
+      
       for(int t = 0; t < T; t++){
         ProbSeq[t] = 0;
-<<<<<<< HEAD
->>>>>>> dcd9cd42e6c094358d08aa29c82d90b6f23b13d2
-=======
->>>>>>> dcd9cd42e6c094358d08aa29c82d90b6f23b13d2
         for(int i = 0; i < N; i++){
           Float largest = 0f;
           for(int j = 0; j < N; j++){
