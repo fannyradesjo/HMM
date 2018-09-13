@@ -105,6 +105,7 @@ public class HMM2 {
       System.out.println("seq: ");
       System.out.println(Arrays.toString(seq));*/
 
+// create delta and delta_idx
       for(int i = 0; i < N; i++){
         delta[0][i] = pi[0][i]*B[i][seq[0]];
     }
@@ -123,13 +124,7 @@ public class HMM2 {
         }
       }
 
-  /*  System.out.println("delta: ");
-        for(int i = 0; i < delta.length; i++){
-        System.out.println(Arrays.toString(delta[i]));}
-        System.out.println("delta_idx: ");
-            for(int i = 0; i < delta_idx.length; i++){
-            System.out.println(Arrays.toString(delta_idx[i]));}*/
-
+// initiate ProbSeq
         largest = 0f;
     for(int j = 0; j < N; j++){
       if(largest <= delta[T-1][j]){
@@ -138,22 +133,10 @@ public class HMM2 {
      }
     }
 
+//bactracking
     for(int t = T-2; t >= 0; t--){
       ProbSeq[t] = delta_idx[t+1][ProbSeq[t+1]];
     }
-
-  /*  System.out.println("Probseq: ");
-    System.out.println(Arrays.toString(ProbSeq));*/
-
-    /*System.out.println("alpha: ");
-      for(int i = 0; i < alpha.length; i++){
-      System.out.println(Arrays.toString(alpha[i]));}
-      System.out.println("beta: ");
-      for(int i = 0; i < beta.length; i++){
-      System.out.println(Arrays.toString(beta[i]));}
-      System.out.println("gamma: ");
-      for(int i = 0; i < gamma.length; i++){
-      System.out.println(Arrays.toString(gamma[i]));}*/
 
 
       String output = fixOutput(ProbSeq);
