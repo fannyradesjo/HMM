@@ -59,14 +59,11 @@ public class HMM2 {
       int[] seq = new int[data[3].length-1];
       int N = pi[0].length;
       int T = seq.length;
-//      Float[][] alpha = new Float[seq.length][pi[0].length];
       Float[][] delta = new Float[T][N];
-//      Float[][] beta = new Float[T][N];
-//      Float[][] gamma = new Float[T][N];
-//      Float sum = 0f;
       int[] ProbSeq = new int[T];
       Float possibledelta;
       Float largest;
+      int[][] delta_idx =  new int[T][N];
 
       //Create A from input data
       int w = 2;
@@ -97,7 +94,7 @@ public class HMM2 {
       }
 
 
-      /*System.out.println("A: ");
+    /*  System.out.println("A: ");
       for(int i = 0; i < A.length; i++){
       System.out.println(Arrays.toString(A[i]));}
       System.out.println("B: ");
@@ -112,64 +109,41 @@ public class HMM2 {
         delta[0][i] = pi[0][i]*B[i][seq[0]];
     }
 
-    /*
-    for(int t = 1; t < T; t++){
-      for(int i = 0; i < N; i++){
-        sum = 0f;
-        for(int j = 0; j < N; j++){
-          sum += alpha[t-1][j]*A[j][i];
-        }
-        alpha[t][i] = sum*B[i][seq[t]];
-      }
-    }
-
-
-      for(int i = 0; i < N; i++){
-        beta[T-1][i] = 1f;
-      }
-
-      for(int t = T-2; t >= 0; t--){
-        for(int i = 0; i < N; i++){
-          sum = 0f;
-          for(int j = 0; j < N; j++){
-            sum += A[i][j]*B[j][seq[t+1]]*beta[t+1][j];
-          }
-          beta[t][i] = sum;
-        }
-      }
-
-      float sumAlpha = 0f;
-      for(int i = 0; i < N; i++){
-        sumAlpha += alpha[T-1][i];
-      }
-
-      for(int t = 0; t < T; t++){
-        for(int i = 0; i < N; i++){
-          gamma[t][i] = (alpha[t][i]*beta[t][i])/sumAlpha;
-        }
-      }
-      */
-
-
       for(int t = 1; t < T; t++){
-        ProbSeq[t] = 0;
         for(int i = 0; i < N; i++){
           largest = 0f;
           for(int j = 0; j < N; j++){
             possibledelta = A[j][i]*delta[t-1][j]*B[i][seq[t]];
-            if(possibledelta > largest){
+            if(possibledelta >= largest){
               largest = possibledelta;
-              ProbSeq[t] = i;
+              delta_idx[t][i] = j;
             }
-          delta[t][i] = largest;
           }
+          delta[t][i] = largest;
         }
       }
 
-    /*  System.out.println("delta: ");
+  /*  System.out.println("delta: ");
         for(int i = 0; i < delta.length; i++){
-        System.out.println(Arrays.toString(delta[i]));}*/
+        System.out.println(Arrays.toString(delta[i]));}
+        System.out.println("delta_idx: ");
+            for(int i = 0; i < delta_idx.length; i++){
+            System.out.println(Arrays.toString(delta_idx[i]));}*/
 
+        largest = 0f;
+    for(int j = 0; j < N; j++){
+      if(largest <= delta[T-1][j]){
+        largest = delta[T-1][j];
+        ProbSeq[T-1] = j;
+     }
+    }
+
+    for(int t = T-2; t >= 0; t--){
+      ProbSeq[t] = delta_idx[t+1][ProbSeq[t+1]];
+    }
+
+  /*  System.out.println("Probseq: ");
+    System.out.println(Arrays.toString(ProbSeq));*/
 
     /*System.out.println("alpha: ");
       for(int i = 0; i < alpha.length; i++){
