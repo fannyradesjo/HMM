@@ -106,6 +106,10 @@ public class HMM1 {
       }
 
 
+                  System.out.println("alpha: ");
+                  for(int i = 0; i < alpha.length; i++){
+                  System.out.println(Arrays.toString(alpha[i]));}
+
       System.out.println(Prob);
       }
 }

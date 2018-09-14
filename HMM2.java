@@ -138,7 +138,6 @@ public class HMM2 {
       ProbSeq[t] = delta_idx[t+1][ProbSeq[t+1]];
     }
 
-
       String output = fixOutput(ProbSeq);
       System.out.println(output);
     }
