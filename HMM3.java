@@ -90,7 +90,7 @@ public class HMM3 {
       }
 
 
-      /*System.out.println("A: ");
+      System.out.println("A: ");
       for(int i = 0; i < A.length; i++){
       System.out.println(Arrays.toString(A[i]));}
       System.out.println("B: ");
@@ -99,71 +99,8 @@ public class HMM3 {
       System.out.println("pi: ");
       System.out.println(Arrays.toString(pi[0]));
       System.out.println("seq: ");
-      System.out.println(Arrays.toString(seq));*/
+      System.out.println(Arrays.toString(seq));
 
-      for(int i = 0; i < N; i++){
-        alpha[0][i] = pi[0][i]*B[i][seq[0]];
-    }
-
-    for(int t = 1; t < T; t++){
-      for(int i = 0; i < N; i++){
-        sum = 0f;
-        for(int j = 0; j < N; j++){
-          sum += alpha[t-1][j]*A[j][i];
-        }
-        alpha[t][i] = sum*B[i][seq[t]];
-      }
-    }
-
-      for(int i = 0; i < N; i++){
-        beta[T-1][i] = 1f;
-      }
-
-      for(int t = T-2; t >= 0; t--){
-        for(int i = 0; i < N; i++){
-          sum = 0f;
-          for(int j = 0; j < N; j++){
-            sum += A[i][j]*B[j][seq[t+1]]*beta[t+1][j];
-          }
-          beta[t][i] = sum;
-        }
-      }
-
-      float sumAlpha = 0f;
-      for(int i = 0; i < N; i++){
-        sumAlpha += alpha[T-1][i];
-      }
-
-      for(int t = 0; t < T; t++){
-        for(int i = 0; i < N; i++){
-          gamma[t][i] = (alpha[t][i]*beta[t][i])/sumAlpha;
-        }
-      }
-
-      for(int t = 0; t < T; t++){
-        ProbSeq[t] = 0;
-        Float largest = 0f;
-        for(int i = 0; i < N; i++){
-          if(gamma[t][i] > largest){
-            largest = gamma[t][i];
-            ProbSeq[t] = i;
-          }
-        }
-      }
-
-    /*  System.out.println("alpha: ");
-      for(int i = 0; i < alpha.length; i++){
-      System.out.println(Arrays.toString(alpha[i]));}
-      System.out.println("beta: ");
-      for(int i = 0; i < beta.length; i++){
-      System.out.println(Arrays.toString(beta[i]));}
-      System.out.println("gamma: ");
-      for(int i = 0; i < gamma.length; i++){
-      System.out.println(Arrays.toString(gamma[i]));}*/
-
-
-      String output = fixOutput(ProbSeq);
-      System.out.println(output);
     }
 
 }
