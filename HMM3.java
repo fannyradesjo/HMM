@@ -68,10 +68,11 @@ public class HMM3 {
       int[] seq = new int[data[3].length-1];
       int N = pi[0].length;
       int T = seq.length;
+      int M = bcol;
       Float[][] beta = new Float[T][N];
       Float sum_alpha = 0f;
       Float[][][] di_gamma = new Float[T-1][N][N];
-      Float[][] gamma = new Float[T-1][N];
+      Float[][] gamma = new Float[T][N];
       Float sum_di_gamma;
       Float sum;
       Float[][] alpha = new Float[T][N];
@@ -151,6 +152,7 @@ public class HMM3 {
             for(int i = 0; i < alpha.length; i++){
             System.out.println(Arrays.toString(alpha[i]));}
 
+//ÄR BETA FÖR KORT FÖR GAMMA???? ÅNGEST!!!! D:
 
 // Här börjar beta
       for (int i = 0; i < N; i++){
@@ -173,7 +175,7 @@ public class HMM3 {
 
 // Här börjar gamma
 
-  for(int k = 0; k < N; k++){
+  for(int k = 0; k < M; k++){
     sum_alpha += alpha[T-1][k];
   }
 
@@ -212,7 +214,7 @@ public class HMM3 {
       for(int k = 0; k < N; k++){
         gamma_t_sum_2 = 0f;
         sum_up = 0f;
-        for(int t = 0; t < T-1; t++){
+        for(int t = 0; t < T; t++){
           sum_up += indicator(seq[t], k)*gamma[t][j];
           gamma_t_sum_2 += gamma[t][j];
         }
