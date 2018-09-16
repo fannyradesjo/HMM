@@ -19,20 +19,6 @@ public class HMM3 {
         return data;
       }
 
-      public static Float[][] matrixMult(Float[][] a, Float[][] b){
-        int m1 = a.length;
-        int n1 = a[0].length;
-        int m2 = b.length;
-        int n2 = b[0].length;
-        if (n1 != m2) throw new RuntimeException("Illegal matrix dimensions.");
-        Float[][] c = new Float[m1][n2];
-        for (int i = 0; i < m1; i++){
-          for (int j = 0; j < n2; j++){
-            c[i][j] = 0f;
-            for (int k = 0; k < n1; k++){
-            c[i][j] += a[i][k] * b[k][j];}}}
-            return c;
-      }
 
       public static String fixOutput(int[] ans){
         StringBuilder builder = new StringBuilder();
@@ -52,6 +38,28 @@ public class HMM3 {
       okay = 1;
     }
     return okay;
+  }
+
+  public static Float[][] getAlpha(Float[][] A, Float[][] B, Float[][] pi,int[] O, int T, int N){
+    Float[][] alpha = new Float[T][N];
+    Float sum;
+
+    for(int i = 0; i < N; i++){
+      alpha[0][i] = pi[0][i]*B[i][O[0]];
+    }
+
+    for(int t = 1; t < T; t++){
+      for(int i = 0; i < N; i++){
+        sum = 0f;
+        for(int j = 0; j < N; j++){
+          sum += alpha[t-1][j]*A[j][i];
+        }
+        alpha[t][i] = sum + B[i][O[t]];
+      }
+    }
+
+    return alpha;
+
   }
 
 
@@ -133,7 +141,7 @@ public class HMM3 {
         B = B_new;
         pi = pi_new;
 
-      //Här börjar alpha-pass algoritmen
+    /*  //Här börjar alpha-pass algoritmen
               for(int i = 0; i < N; i++){
                 alpha[0][i] = pi[0][i]*B[i][seq[0]];
             }
@@ -150,7 +158,9 @@ public class HMM3 {
 
             System.out.println("alpha: ");
             for(int i = 0; i < alpha.length; i++){
-            System.out.println(Arrays.toString(alpha[i]));}
+            System.out.println(Arrays.toString(alpha[i]));}*/
+
+            alpha = getAlpha(A,B,pi,seq,T,N);
 
 //ÄR BETA FÖR KORT FÖR GAMMA???? ÅNGEST!!!! D:
 
@@ -176,7 +186,7 @@ public class HMM3 {
 // Här börjar gamma
 
   for(int k = 0; k < M; k++){
-    sum_alpha += alpha[T-1][k];
+    sum_alpha += alpha[T-1][k]+0.1f;
   }
 
   for(int t = 0; t < T-1; t++){
@@ -211,7 +221,7 @@ public class HMM3 {
   System.out.println("gamma_t_sum: " + gamma_t_sum);
 
     for(int j = 0; j < N; j++){
-      for(int k = 0; k < N; k++){
+      for(int k = 0; k < ; k++){
         gamma_t_sum_2 = 0f;
         sum_up = 0f;
         for(int t = 0; t < T; t++){
