@@ -3,9 +3,11 @@ import java.lang.StringBuilder;
 import java.lang.Math;
 
 
-public class HMM3_2{
+public class HMM3_3{
 
 public static Float[] c;
+public static Float[][] gamma;
+public static Float[][][] di_gamma;
 
 
   public static String[][] takeInput(){
@@ -43,24 +45,22 @@ public static Float[] c;
     c[0] = 0f;
     for(int i = 0; i < N; i++){
       alpha[0][i] = pi[0][i]*B[i][O[0]];
-      c[0] += alpha[0][i];
+      c[0] = c[0]+A[0][i];
     }
 
-    //scale alpha0
-    if(c[0] != 0){
-    c[0] = 1/c[0];}
+    c[0] = 1/c[0];
     for(int i = 0; i < N; i++){
-      alpha[0][i] = c[0]*alpha[0][i];
+      alpha[0][i] = c[0]*A[0][i];
     }
 
     for(int t = 1; t < T; t++){
       c[t] = 0f;
-      for(int i = 0; i < N; i++){
-        sum = 0f;
-        for(int j = 0; j < N; j++){
-          sum += alpha[t-1][j]*A[j][i];
+      for(int i = 0; i <N; i++){
+        alpha[t][i] = 0f;
+        for(int j = 0; j <N; j++){
+          alpha[t][i] += alpha[t-1][j]*A[j][i];
         }
-        alpha[t][i] = sum + B[i][O[t]];
+        alpha[t][i] = alpha[t][i]*B[i][O[t]];
         c[t] += alpha[t][i];
       }
       c[t] = 1/c[t];
@@ -69,67 +69,66 @@ public static Float[] c;
       }
     }
 
-
     return alpha;
-
   }
 
   public static Float[][] getBeta(Float[][] A, Float[][] B, int[] O, int T, int N){
     Float[][] beta = new Float[T][N];
 
     for(int i = 0; i < N; i++){
-      beta[T-1][i] = 1f;
       beta[T-1][i] = c[T-1];
     }
 
     for(int t = T-2; t >= 0; t--){
       for(int i = 0; i < N; i++){
         beta[t][i] = 0f;
-        for(int j = 0; j < N; j++){
+        for(int j = 0; j<N; j++){
           beta[t][i] += A[i][j]*B[j][O[t+1]]*beta[t+1][j];
         }
         beta[t][i] = c[t]*beta[t][i];
       }
     }
+
     return beta;
   }
 
-  public static Float getP(Float[][] alpha, int T, int N){
-    Float P = 0f;
+  public static Float getLogP(Float[][] alpha, int T){
+    Float LogP = 0f;
 
-    for(int i = 0; i < N; i++){
-      P += alpha[T-1][i];
+    for(int i = 0; i < T; i++){
+      LogP += (float)Math.log(c[i]);
     }
-    return P;
+    return LogP;
   }
 
-  public static Float[][][] getDiGamma(Float[][] A, Float[][] B, int[] O, Float[][] alpha, Float[][] beta, int T, int N){
-    Float[][][] di_gamma = new Float[T-1][N][N];
-    Float P = getP(alpha, T, N);
+  public static void getGammas(Float[][] A, Float[][] B, int[] O, Float[][] alpha, Float[][] beta, int T, int N){
+    di_gamma = new Float[T][N][N];
+    gamma = new Float[T][N];
+    Float denom;
 
     for(int t = 0; t < T-1; t++){
+      denom = 0f;
       for(int i = 0; i < N; i++){
         for(int j = 0; j < N; j++){
-          di_gamma[t][i][j] = alpha[t][i]*A[i][j]*B[j][O[t+1]]*beta[t+1][j]/P;
+          denom += alpha[t][i]*A[i][j]*B[j][O[t+1]]*beta[t+1][j];
         }
       }
-    }
-
-    return di_gamma;
-  }
-
-  public static Float[][] getGamma(Float[][][] di_gamma, int T, int N){
-    Float[][] gamma = new Float[T-1][N];
-
-    for(int t = 0; t < T-1; t++){
       for(int i = 0; i < N; i++){
         gamma[t][i] = 0f;
         for(int j = 0; j < N; j++){
+          di_gamma[t][i][j] = (alpha[t][i]*A[i][j]*B[j][O[t+1]]*beta[t+1][j])/denom;
           gamma[t][i] += di_gamma[t][i][j];
         }
       }
     }
-    return gamma;
+
+    denom = 0f;
+    for(int i = 0; i < N; i++){
+      denom = denom + alpha[T-1][i];
+    }
+    for(int i = 0; i < N; i++){
+      gamma[T-1][i] = alpha[T-1][i]/denom;
+    }
   }
 
   public static Float[][] setPi(Float[][] gamma, int N){
@@ -179,6 +178,36 @@ public static Float[] c;
     return B;
   }
 
+  public static String fixOutput(Float[][] A, Float[][] B, int N, int M){
+    StringBuilder builder = new StringBuilder();
+    builder.append("          ");
+    builder.append(Integer.toString(N));
+      builder.append(" ");
+    builder.append(Integer.toString(N));
+      builder.append(" ");
+    for(int i = 0; i < A[0].length; i++){
+      for(Float e: A[i]) {
+        builder.append(Float.toString(e));
+        builder.append(" ");
+      }
+    }
+    builder.append("\n");
+    builder.append(Integer.toString(N));
+      builder.append(" ");
+    builder.append(Integer.toString(M));
+      builder.append(" ");
+    for(int i = 0; i < B[0].length; i++){
+      for(Float e: B[i]) {
+        builder.append(Float.toString(e));
+        builder.append(" ");
+      }
+    }
+    builder.setLength(builder.length() - 1);
+    String str = builder.toString();
+    return str;
+
+}
+
       public static void main(String[] args) {
         String[][] data = takeInput();
         int arow = Integer.parseInt(data[0][0]);
@@ -226,8 +255,14 @@ public static Float[] c;
       P_new = 10f;
       P_old = 0f;
 
-while( Math.abs(P_new - P_old) > 0.0000000000001){
+      int iter = 0;
+      int maxIter = 100;
+      Float LogP_old = 0f;
+      Float LogP_new = 10f;
 
+while(iter < maxIter && Math.abs(LogP_old - LogP_new) > 0.00000000000000001){
+
+        iter++;
         Float[][] alpha = getAlpha(A,B,pi,O,T,N);
 
       // printMatrix("alpha", alpha);
@@ -236,9 +271,7 @@ while( Math.abs(P_new - P_old) > 0.0000000000001){
 
       // printMatrix("beta", beta);
 
-        Float[][][] di_gamma = getDiGamma(A, B, O, alpha, beta, T, N);
-
-        Float[][] gamma = getGamma(di_gamma, T, N);
+        getGammas(A,B,O,alpha,beta,T,N);
 
       //  printMatrix("gamma", gamma);
 
@@ -248,14 +281,12 @@ while( Math.abs(P_new - P_old) > 0.0000000000001){
 
         B = setB(gamma, O, T, N, M);
 
-        P_old = P_new;
-        P_new = getP(alpha, T, N);
+        LogP_old = LogP_new;
+        LogP_new = getLogP(alpha, T);
 
-        System.err.println("P: " + P_new);
       }
 
-      printMatrix("A", A);
-      printMatrix("B", B);
+      System.out.println(fixOutput(A,B,N,M));
 
       }
 }
