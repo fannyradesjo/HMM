@@ -196,7 +196,7 @@ public static Float[][][] di_gamma;
       builder.append(" ");
     builder.append(Integer.toString(M));
       builder.append(" ");
-    for(int i = 0; i < B[0].length; i++){
+    for(int i = 0; i < N; i++){
       for(Float e: B[i]) {
         builder.append(Float.toString(e));
         builder.append(" ");
@@ -280,6 +280,8 @@ while(iter < maxIter && Math.abs(LogP_old - LogP_new) > 0.00000000000000001){
         A = setA(di_gamma, gamma, T, N);
 
         B = setB(gamma, O, T, N, M);
+
+        printMatrix("B", B);
 
         LogP_old = LogP_new;
         LogP_new = getLogP(alpha, T);
